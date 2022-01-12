@@ -3,6 +3,7 @@ import {
   FriendshipRepositoryShowResponseRootObject,
   FriendshipRepositoryChangeResponseRootObject,
   FriendshipRepositorySetBestiesResponseRootObject,
+  StatusResponse,
 } from '../responses';
 import { SetBestiesInput } from '../types';
 
@@ -89,6 +90,34 @@ export class FriendshipRepository extends Repository {
     });
 
     return body.friendship_statuses;
+  }
+  
+  async addFriend(pk) {
+    const { body } = await this.client.request.send<StatusResponse>({
+      url: `/api/v1/stories/private_stories/add_member/`,
+      method: 'POST',
+      form: {
+        _uuid: this.client.state.uuid,
+        module: 'audience_selection',
+        source: 'story_share_shortcut',
+        user_id: pk,
+      },
+    });
+    return body;
+  }
+  
+  async removeFriend(pk) {
+    const { body } = await this.client.request.send<StatusResponse>({
+      url: `/api/v1/stories/private_stories/remove_member/`,
+      method: 'POST',
+      form: {
+        _uuid: this.client.state.uuid,
+        module: 'audience_selection',
+        source: 'story_share_shortcut',
+        user_id: pk,
+      },
+    });
+    return body;
   }
 
   mutePostsOrStoryFromFollow(options: {

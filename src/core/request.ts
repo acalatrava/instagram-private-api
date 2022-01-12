@@ -74,6 +74,7 @@ export class Request {
       this.defaults,
     );
     Request.requestDebug(`Requesting ${options.method} ${options.url || options.uri || '[could not find url]'}`);
+    Request.requestDebug(JSON.stringify(options.headers), "Authorization:", JSON.stringify(this.client.state.authorization));
     const response = await this.faultTolerantRequest(options);
     this.updateState(response);
     process.nextTick(() => this.end$.next());

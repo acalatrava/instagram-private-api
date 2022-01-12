@@ -8,7 +8,7 @@ import * as builds from '../samples/builds.json';
 import * as supportedCapabilities from '../samples/supported-capabilities.json';
 import * as Constants from './constants';
 import { ChallengeStateResponse, CheckpointResponse } from '../responses';
-import { IgCookieNotFoundError, IgNoCheckpointError, IgUserIdNotFoundError } from '../errors';
+import { IgNoCheckpointError } from '../errors';
 import { Enumerable } from '../decorators';
 import debug from 'debug';
 
@@ -186,7 +186,8 @@ export class State {
     const cookie = this.extractCookie(key);
     if (cookie === null) {
       State.stateDebug(`Could not find ${key}`);
-      throw new IgCookieNotFoundError(key);
+      return '';
+      //throw new IgCookieNotFoundError(key);
     }
     return cookie.value;
   }
@@ -196,7 +197,7 @@ export class State {
       return this.cookieUserId;
     } catch (e) {
       if (this.challenge === null || !this.challenge.user_id) {
-        throw new IgUserIdNotFoundError();
+        //throw new IgUserIdNotFoundError();
       }
       return String(this.challenge.user_id);
     }
