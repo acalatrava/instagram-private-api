@@ -53,12 +53,6 @@ export class AccountRepository extends Repository {
         AccountRepository.accountDebug(
           `Requesting SMS...`,
         );
-        console.log({
-            username: username,
-            guid: this.client.state.uuid,
-            device_id: this.client.state.deviceId,
-            two_factor_identifier: error.response.body.two_factor_info.two_factor_identifier,
-          });
         this.client.request.send({
           method: 'POST',
           url: '/api/v1/accounts/send_two_factor_login_sms/',
