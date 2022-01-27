@@ -50,6 +50,19 @@ export class AccountRepository extends Repository {
         AccountRepository.accountDebug(
           `Login failed, two factor auth required: ${JSON.stringify(error.response.body.two_factor_info)}`,
         );
+        AccountRepository.accountDebug(
+          `Requesting SMS...`,
+        );
+        this.client.request.send({
+          method: 'POST',
+          url: '/api/v1/accounts/send_two_factor_login_sms/',
+          form: this.client.request.sign({
+            username,
+            guid: this.client.state.uuid,
+            device_id: this.client.state.deviceId,
+            two_factor_identifier: error.response.body.two_factor_info.two_factor_identifier,
+          }),
+        });
         throw new IgLoginTwoFactorRequiredError(error.response as IgResponse<AccountRepositoryLoginErrorResponse>);
       }
       switch (error.response.body.error_type) {
@@ -114,14 +127,13 @@ export class AccountRepository extends Repository {
       method: 'POST',
       form: this.client.request.sign({
         verification_code: options.verificationCode,
+        _csrftoken: this.client.state.cookieCsrfToken,
         two_factor_identifier: options.twoFactorIdentifier,
         username: options.username,
         trust_this_device: options.trustThisDevice,
         guid: this.client.state.uuid,
         device_id: this.client.state.deviceId,
         verification_method: options.verificationMethod,
-        phone_id: this.client.state.phoneId,
-        waterfall_id: this.client.state.uuid,
       }),
     });
     return body;
